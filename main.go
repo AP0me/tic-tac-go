@@ -19,6 +19,49 @@ func render(board *[3][3]rune){
 	fmt.Println("y")
 }
 
+func won(board *[3][3]rune, x int , y int, player rune) bool {
+
+	var all_same_x = true;
+	for i := 0; i < 3; i++ {
+		var x_i = (x+i) % 3;
+		if(board[x_i][y] != player){
+			all_same_x = false;
+			break;
+		}
+	}
+
+	var all_same_y = true;
+	for i := 0; i < 3; i++ {
+		var y_i = (y+i) % 3;
+		if(board[x][y_i] != player){
+			all_same_y = false;
+			break;
+		}
+	}
+
+	var all_same_d14 = true;
+	for i := 0; i < 3; i++ {
+		var x_i = (x+i) % 3;
+		var y_i = (y+i) % 3;
+		if(board[x_i][y_i] != player){
+			all_same_d14 = false;
+			break;
+		}
+	}
+
+	var all_same_d32 = true;
+	for i := 0; i < 3; i++ {
+		var x_i = (x+i) % 3;
+		var y_i = (3+y-i) % 3;
+		if(board[x_i][y_i] != player){
+			all_same_d32 = false;
+			break;
+		}
+	}
+
+	return all_same_x || all_same_y || all_same_d14 || all_same_d32;
+}
+
 func main(){
 	var board = [3][3]rune{};
 	for i, board_line := range board {
@@ -28,7 +71,8 @@ func main(){
 	}
 
 	var players = [2]rune{'X', 'O'};
-	for {		
+	var game_ended = false;
+	for !game_ended {
 		for _, player := range players {
 			render(&board);
 
@@ -53,9 +97,13 @@ func main(){
 					continue;
 				}
 				board[x][y] = player;
+				if(won(&board, x, y, player)){ game_ended = true; }
 				break;
 			}
-
+			if(game_ended){
+				fmt.Printf("GAME OVER ! Player %c won\n", player);
+				break;
+			}
 		}
 	}
 }
