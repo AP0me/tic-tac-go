@@ -1,4 +1,4 @@
-package main
+package tictactoe
 import(
 	"fmt"
 	"bufio"
