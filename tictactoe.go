@@ -1,13 +1,20 @@
-package tictactoe
+package main
+
 import(
 	"fmt"
 	"bufio"
 	"os"
 	"strings"
 	"strconv"
+	"slices"
 )
 
-func render(board *[3][3]rune){
+type Board struct {
+	b [3][3]rune;
+}
+
+func render(board_b *Board){
+	var board = board_b.b;
 	fmt.Println("  1 2 3 x")
     for i, board_line := range board {
         fmt.Printf("%d ", i+1);
@@ -19,12 +26,14 @@ func render(board *[3][3]rune){
 	fmt.Println("y")
 }
 
-func won(board *[3][3]rune, x int , y int, player rune) bool {
-
+func won(board *Board, x int , y int, player rune, players []rune) bool {
+	if(slices.Contains(players, player)){
+		fmt.Println("")
+	}
 	var all_same_x = true;
 	for i := 0; i < 3; i++ {
 		var x_i = (x+i) % 3;
-		if(board[x_i][y] != player){
+		if(board.b[x_i][y] != player){
 			all_same_x = false;
 			break;
 		}
@@ -33,7 +42,7 @@ func won(board *[3][3]rune, x int , y int, player rune) bool {
 	var all_same_y = true;
 	for i := 0; i < 3; i++ {
 		var y_i = (y+i) % 3;
-		if(board[x][y_i] != player){
+		if(board.b[x][y_i] != player){
 			all_same_y = false;
 			break;
 		}
@@ -43,7 +52,7 @@ func won(board *[3][3]rune, x int , y int, player rune) bool {
 	for i := 0; i < 3; i++ {
 		var x_i = (x+i) % 3;
 		var y_i = (y+i) % 3;
-		if(board[x_i][y_i] != player){
+		if(board.b[x_i][y_i] != player){
 			all_same_d14 = false;
 			break;
 		}
@@ -53,7 +62,7 @@ func won(board *[3][3]rune, x int , y int, player rune) bool {
 	for i := 0; i < 3; i++ {
 		var x_i = (x+i) % 3;
 		var y_i = (3+y-i) % 3;
-		if(board[x_i][y_i] != player){
+		if(board.b[x_i][y_i] != player){
 			all_same_d32 = false;
 			break;
 		}
@@ -62,11 +71,11 @@ func won(board *[3][3]rune, x int , y int, player rune) bool {
 	return all_same_x || all_same_y || all_same_d14 || all_same_d32;
 }
 
-func main(){
-	var board = [3][3]rune{};
-	for i, board_line := range board {
+func main() {
+	var board Board;
+	for i, board_line := range board.b {
 		for j := range board_line {
-			board[i][j] = '-';
+			board.b[i][j] = '-';
 		}
 	}
 
@@ -92,12 +101,12 @@ func main(){
 					fmt.Printf("x = %d, y = %d is out of board range\n", x+1, y+1);
 					continue;
 				}
-				if(board[x][y] != '-'){
+				if(board.b[x][y] != '-'){
 					fmt.Println("position is full");
 					continue;
 				}
-				board[x][y] = player;
-				if(won(&board, x, y, player)){ game_ended = true; }
+				board.b[x][y] = player;
+				if(won(&board, x, y, player, players[:])){ game_ended = true; }
 				break;
 			}
 			if(game_ended){
